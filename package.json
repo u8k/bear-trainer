@@ -1,5 +1,5 @@
 {
-  "name": "BEAR TRAINER DELUXE 2.0",
+  "name": "bear-trainer",
   "version": "1.0.0",
   "description": "interval training",
   "main": "app.js",
