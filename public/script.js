@@ -293,7 +293,9 @@ function volumeAdjust(amount) {
   else if ((current == 9) && (amount == -1)) {document.getElementById("volUpKnob").classList.remove('hidden');}
 }
 
+
 ////////**************** sound player stuff**********///////////////
+/*
 var channel_max = 10; // number of channels
 var audiochannels = [];
 for (var a = 0; a < channel_max; a++) { // prepare the channels
@@ -304,6 +306,7 @@ for (var a = 0; a < channel_max; a++) { // prepare the channels
 }
 
 // sound player
+// 's' must be an integer from 0-24 inclusive
 function playSound(s) {
   for (var a = 0; a < audiochannels.length; a++) {
     var thistime = new Date();
@@ -316,9 +319,15 @@ function playSound(s) {
     }
   }
 }
+*/
 
 //load in audio files
 var audioStorage = [];
 for (var i = 0; i < 25; i++) {
   audioStorage.push(new Audio(["sounds/"+ i +".wav"]))
+}
+//////////////////
+// 's' must be an integer from 0-24 inclusive
+var playSound = function (s) {
+  audioStorage[s].play();
 }
