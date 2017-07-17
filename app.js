@@ -2,7 +2,7 @@ var express = require('express');
 var path = require('path');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
-var session = require('express-session');
+var session = require('cookie-session');
 var passport = require('passport');
 var bcrypt = require('bcryptjs');
 var User = require('./models/user');
@@ -12,7 +12,7 @@ var User = require('./models/user');
 var promise = mongoose.connect(process.env.MONGODB_URI, {useMongoClient: true});
 var db = mongoose.connection;
 db.once('open', function(){
-  console.log('Connected to MongoDB');
+  //console.log('Connected to MongoDB');
 });
 
 // Check for DB errors
@@ -34,12 +34,12 @@ app.use(bodyParser.json());
 // Set Public Folder
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Express Session Middleware
+// Configure cookie-session middleware
 app.use(session({
-  secret: 'SECRETSECRETIVEGOTTASECRET',
-  resave: true,
-  saveUninitialized: true
-}));
+  name: 'session',
+  keys: ['SECRETSECRETIVEGOTTASECRET'],
+  maxAge: 7 * 24 * 60 * 60 * 1000 // IT'S BEEN...(one week)
+}))
 
 // Passport Config
 require('./config/passport')(passport);
@@ -143,9 +143,10 @@ app.get('/logout', function(req, res){
   res.send("success")
 });
 
+
 app.set('port', (process.env.PORT || 3000));
 
 // Start Server
 app.listen(app.get('port'), function(){
-  console.log('Servin it up fresh on port', app.get('port'),'!');
+  console.log('Servin it up fresh on port ' + app.get('port') + '!');
 });
