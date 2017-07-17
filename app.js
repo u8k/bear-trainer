@@ -144,9 +144,9 @@ app.get('/logout', function(req, res){
   res.send("success")
 });
 
-
+app.set('port', (process.env.PORT || 3000));
 
 // Start Server
-app.listen(3000, function(){
-  console.log('Servin it up fresh on port 3000!');
+app.listen(app.get('port'), function(){
+  console.log('Servin it up fresh on port', app.get('port'),'!');
 });
