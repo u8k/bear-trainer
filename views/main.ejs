@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bear Trainer Deluxe 2.0</title>
+    <link rel="stylesheet" href="style.css">
+	  <link rel="icon" type="image/png" href="img/icon.png">
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <h1 onclick="showPanel('title-panel')">Bear Trainer Deluxe 2.0</h1>
+
+      <div class="interval-button-container">
+        <% var intvlNames = [0, 'm2','M2','m3','M3','P4','tri','P5','m6','M6','m7','M7','8'];
+        for(var i = 1; i < 13; i++) { %>
+            <div class="interval-button" id="b<%= i %>" onclick="checkInput(<%= i %>, this)"><btntxt><%= intvlNames[i] %></btntxt></div>
+        <% } %>
+
+        <!--
+        <div class="interval-button" id="b1" onclick="checkInput(1, this)"><btntxt>m2</btntxt></div>
+        <div class="interval-button" id="b2" onclick="checkInput(2, this)"><btntxt>M2</btntxt></div>
+        <div class="interval-button" id="b3" onclick="checkInput(3, this)"><btntxt>m3</btntxt></div>
+        <div class="interval-button" id="b4" onclick="checkInput(4, this)"><btntxt>M3</btntxt></div>
+        <div class="interval-button" id="b5" onclick="checkInput(5, this)"><btntxt>P4</btntxt></div>
+        <div class="interval-button" id="b6" onclick="checkInput(6, this)"><btntxt>tri</btntxt></div>
+        <div class="interval-button" id="b7" onclick="checkInput(7, this)"><btntxt>P5</btntxt></div>
+        <div class="interval-button" id="b8" onclick="checkInput(8, this)"><btntxt>m6</btntxt></div>
+        <div class="interval-button" id="b9" onclick="checkInput(9, this)"><btntxt>M6</btntxt></div>
+        <div class="interval-button" id="b10" onclick="checkInput(10, this)"><btntxt>m7</btntxt></div>
+        <div class="interval-button" id="b11" onclick="checkInput(11, this)"><btntxt>M7</btntxt></div>
+        <div class="interval-button" id="b12" onclick="checkInput(12, this)"><btntxt>8</btntxt></div>
+         -->
+      </div>
+
+      <div id="go-button" class="go-button button" onclick="action()"><btntxt id="go-text">GO</btntxt></div>
+    </div>
+
+    <p id="log-button" onclick="showPanel('user-info-panel')">
+      <% if (user) { %>
+        log out
+      <% } else { %>
+        log in
+      <% } %>
+    </p>
+
+    <div id="stats-corner" class="removed">
+      <p><c id="sesWins"></c>/<c id="sesAttempts"></c></p>
+      <p>streak: <c id="streak">0</c></p>
+    </div>
+
+    <div id="options-button" class="button" onclick="showPanel('options-panel')">~</div>
+
+    <div id="panel-backing" class="removed"></div>
+
+    <div id="title-panel" class="removed">
+      <div class="title-panel-box">
+        <h5>now with the ability to<br>train both of your bears</h5>
+        <h5>AT</h5>
+        <h5>THE</h5>
+        <h5>SAME</h5>
+        <h5>TIME</h5>
+        <img id="bear" src="img/b0.png">
+        <div class="text-button return-button" onclick="closePanel()">return</div>
+        <p style="font-size:14px">s u b l i m i n a l d u c k s a t g m a i l d o t c o m</p>
+      </div>
+    </div>
+
+    <div id="user-info-panel" class="removed">
+      <% if (user) { %>
+        <p>signed in as:</p>
+        <br>
+        <h3 id="userName"><%= user.username %></h3>
+        <br>
+        <br>
+        <div class="text-button" onclick="signOut()">sign out</div>
+        <br>
+        <br>
+        <div class="text-button return-button" onclick="closePanel()">return</div>
+      <% } else { %>
+        <h3 id="loginError"></h3>
+        <input id="nameInput" type="text" placeholder="name">
+        <br>
+        <input id="passInput" type="password" placeholder="password">
+        <br>
+        <br>
+        <div class="text-button" onclick="sign('in')">sign in</div>
+        <br>
+        <div class="text-button" onclick="sign('up')">sign up</div>
+        <br>
+        <br>
+        <div class="text-button return-button" onclick="closePanel()">return</div>
+      <% } %>
+    </div>
+
+    <div id="stats-panel" class="removed">
+      <div class="panel-button-box">
+        <div class="text-button" onclick="showPanel('info-panel')">info</div>
+        <h2>stats</h2>
+        <div class="text-button" onclick="showPanel('options-panel')">options</div>
+      </div>
+      <div class="stats-box-box-box">
+        <div class="stat-summary">
+          <% if (user) {
+            var correct = 0;
+            var attempts = 0;
+            for(var i= -12; i< 13; i++) {
+              if (i !== 0) {
+                correct += user['interval' + i]['wins'];
+                attempts += user['interval' + i]['attempts'];
+              }
+            }
+            var accuracy = 0;
+            if (attempts !== 0) {
+              accuracy = Math.round(correct/attempts * 100);
+            } %>
+            <p>All Time:</p><br>
+            <p>correct: <c id="allTimeWins"><%= correct %></c></p><br>
+            <p>attempts: <c id="allTimeAttempts"><%= attempts %></c></p><br>
+            <p>accuracy: <c id="accuracy"><%= accuracy %></c>%</p><br>
+
+          <% } else { %>
+            <p>sign in to<br>collect<br>"all time"<br>stats</p>
+          <% } %>
+        </div>
+        <div class="stats-box-box">
+          <div class="stats-box">
+            <p class="stat-titles">now:</p>
+            <div class="ascending">
+              <p class="stat-collumn-title">asc.</p>
+              <% for(var i= 1; i< 13; i++) { %>
+                  <p><%= intvlNames[i] %>: <c id="sesWins<%= i %>">0</c>/<c id="sesAttempts<%= i %>">0</c></p>
+              <% } %>
+            </div>
+            <div class="descending">
+              <p class="stat-collumn-title">des.</p>
+              <% for(var i= 1; i< 13; i++) { %>
+                  <p><%= intvlNames[i] %>: <c id="sesWins-<%= i %>">0</c>/<c id="sesAttempts-<%= i %>">0</c></p>
+                <% } %>
+            </div>
+          </div>
+          <% if (user) { %>
+            <div class="stats-box">
+              <p class="stat-titles">all<br>time:</p>
+              <div class="ascending">
+                <p class="stat-collumn-title">asc.</p>
+                  <% for(var i= 1; i< 13; i++) { %>
+                    <p><%= intvlNames[i] %>: <c id="allWins<%= i %>"><%= user['interval' + i]['wins'] %></c>/<c id="allAttempts<%= i %>"><%= user['interval' + i]['attempts'] %></c></p>
+                  <% } %>
+              </div>
+              <div class="descending">
+                <p class="stat-collumn-title">des.</p>
+                  <% for(var i= 1; i< 13; i++) { %>
+                    <p><%= intvlNames[i] %>: <c id="allWins-<%= i %>"><%= user['interval-' + i]['wins'] %></c>/<c id="allAttempts-<%= i %>"><%= user['interval-' + i]['attempts'] %></c></p>
+                  <% } %>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      </div>
+      <div class="text-button return-button" onclick="closePanel()">return</div>
+    </div>
+
+    <div id="options-panel" class="removed">
+      <div class="panel-button-box">
+        <div class="text-button" onclick="showPanel('stats-panel')">stats</div>
+        <h2>options</h2>
+        <div class="text-button" onclick="showPanel('info-panel')">info</div>
+      </div>
+      <div class="options-box">
+        <div class="active-intervals">
+          <h3>active intervals:</h3>
+          <div class="top-strip">
+            <h4>ascending</h4>
+            <div class="top-strip-button" onclick="toggleAll(this)">none</div>
+          </div>
+          <div class="interval-selector">
+            <% for(var i= 1; i< 13; i++) {
+              %> <div id="sb<%= i %>" class="selector-button" onclick="toggleInterval(this, <%= i %>)"><btntxt> <%= intvlNames[i] %> </btntxt></div> <%
+            } %>
+          </div>
+          <h4>descending</h4>
+          <div class="interval-selector">
+            <% for(var i= -1; i> -13; i--) {
+              %> <div id="sb<%= i %>" class="selector-button" onclick="toggleInterval(this, <%= i %>)"><btntxt> <%= intvlNames[-i] %> </btntxt></div> <%
+            } %>
+          </div>
+        </div>
+        <div class="other-options-box">
+          <div class="meters-box">
+            <div class="volume-controls">
+              <div>volume:</div>
+              <knob id="volDownKnob" onclick="volumeAdjust(-1)"><</knob>
+              <knob id="volumeMeter" onclick='playSound(Math.floor(Math.random()*(24)))'>5</knob>
+              <knob id="volUpKnob" onclick="volumeAdjust(1)">></knob>
+            </div>
+            <div class="speed-controls">
+              <div>speed:</div>
+              <knob id="speedDownKnob" onclick="speedAdjust(-1)"><</knob>
+              <knob id="speedMeter" onclick="speedAdjust(0)">5</knob>
+              <knob id="speedUpKnob" onclick="speedAdjust(1)">></knob>
+            </div>
+          </div>
+          <br>
+          <div class="text-button return-button" onclick="closePanel()">return</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="info-panel" class="removed">
+      <div class="panel-button-box">
+        <div class="text-button" onclick="showPanel('options-panel')">options</div>
+        <h2>info</h2>
+        <div class="text-button" onclick="showPanel('stats-panel')">stats</div>
+      </div>
+      <p class="info-text">
+      
+      if you are new and/or  confused and/or overwhelmed and/or doing poorly and/or getting frustrated:<br>
+      <br>
+      go to the options tab<br>
+      press 'none' to disable all intervals<br>
+      re-enable any two<br>
+      just work on those two to start with<br>
+      once you have the hang of those, try adding a third. and so on.<br>
+      <br>
+      spacebar = go
+      <br><br>
+      <a href="https://en.wikipedia.org/wiki/Ear_training#Interval_recognition">have some wiki</a>
+      </p>
+      <div class="text-button return-button" onclick="closePanel()">return</div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

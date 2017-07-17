@@ -1,0 +1,374 @@
+* {
+  color: white;
+  font-family: sans-serif;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #3D3D4C;
+  padding: 0;
+  margin: 0;
+}
+
+p {
+  margin: 0
+}
+
+.main-wrapper {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h1 {
+  text-align: center;
+  font-size: 6.5vmin;
+  margin: 5vh;
+}
+
+.interval-button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100vw;
+  height: 108vw;
+}
+
+/*
+#b1 {background-color: #5A66E5}
+#b2 {background-color: #945AE4}
+#b3 {background-color: #D254DF}
+#b4 {background-color: #DE53A4}
+#b5 {background-color: #E55B66}
+#b6 {background-color: #E29258}
+#b7 {background-color: #D7CB4C}
+#b8 {background-color: #9CD64C}
+#b9 {background-color: #5DDC51}
+#b10 {background-color: #52DD8C}
+#b11 {background-color: #4AD5C9}
+#b12 {background-color: #4C9ED7}
+*/
+
+#log-button,
+knob,
+.selector-button,
+.text-button,
+.button,
+.interval-button,
+.top-strip-button {
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.button,
+.interval-button {
+  display: inline;
+  background-color: #5A60E4;
+  border-radius: 10px;
+  height: 23%;
+  width: 25%;
+  margin: 1%;
+  text-align: center;
+  font-size: 25px;
+  border-style: solid;
+  border-color: black;
+  border-width: 0.5vmax;
+}
+
+@media only screen and (min-width: 500px) {
+  .interval-button-container {
+    height: 23.33vw;
+    min-height: 166.67px;
+    width: 70vw;
+    min-width: 500px;
+  }
+  .interval-button {
+    height: 42.42%;
+    width: 14%;
+  }
+}
+
+btntxt {
+  position: relative;
+  top: 30%;
+  color: inherit;
+}
+@media only screen and (min-width: 600px) and (min-height: 600px) {
+  btntxt {top: 34%;}
+}
+
+.go-button {
+  height: 16vmin;
+  width: 16vmin;
+  min-width: 80px;
+  min-height: 80px;
+  background-color: #D7D4D8;
+  color: black
+}
+
+#log-button {
+  position: fixed;
+  top: 2vmin;
+  right: 2vmin;
+}
+
+#options-button {
+  position: fixed;
+  bottom: 2vmin;
+  right: 2vmin;
+  border-radius: 50%;
+  padding-top: 2px;
+  height: 35px;
+  width: 35px;
+  border-width: 2.4px;
+  background-color: #626263;
+}
+
+#stats-corner {
+  position: fixed;
+  bottom: 2vmin;
+  left: 2vmin;
+}
+
+#title-panel,
+#stats-panel,
+#options-panel,
+#info-panel,
+#panel-backing {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  text-align: center;
+  z-index: 2;
+}
+#panel-backing {
+  background-color: rgba(0, 0, 0, 0.85);
+}
+
+.title-panel-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+h5 {
+  font-size: 18px;
+  margin: 1vmin;
+}
+
+@media only screen and (max-height: 500px) {
+  .title-panel-box {
+    justify-content: space-around;
+  }
+  #bear {
+    position: absolute;
+    right: 30vmin;
+    top: 15vmin;
+  }
+}
+
+
+#user-info-panel {
+  position: fixed;
+  top: 47%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  text-align: center;
+  z-index: 3;
+}
+
+.text-button {
+  background-color: dimgrey;
+  border-radius: 10px;
+  padding: 6px;
+  height: auto;
+  width: 80px;
+  margin: auto;
+  font-size: 18px;
+}
+
+/*hack to make Chrome not force a yellow background when it autofills*/
+input {
+  background-color: lightgrey;
+  border-radius: 6px;
+  border-style: none;
+  outline-style: none;
+  font-size: 18px;
+  margin: 5px;
+  color: black;
+}
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px lightgrey inset !important;
+}
+
+.panel-button-box {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 13vmin;
+  max-height: 80px;
+  background-color: #3D3D4C;
+}
+
+.return-button {
+  margin: 2vmin;
+  display: inline-block;
+}
+
+.stats-box,
+.stats-box-box,
+.stats-box-box-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  text-align: left;
+  max-width: 600px;
+    margin: auto;
+}
+@media only screen and (max-width: 500px) {
+  .stats-box-box {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}
+
+.stat-titles {
+  position: relative;
+  bottom: 55px;
+}
+
+.stat-collumn-title {
+  text-decoration: underline;
+}
+
+.stats-box {
+  width: 210px;
+}
+
+.stat-summary {
+  text-align: center;
+  margin: auto;
+}
+
+.options-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.other-options-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+h2 {
+  margin: 0;
+}
+
+h3 {
+  margin: 2.5vmin 0 0 0;
+}
+
+h4 {
+  text-align: left;
+  font-size: 16px;
+  margin: 0 0 0 15px;
+}
+
+.active-intervals {
+  width: 100vmin;
+  max-width: 500px;
+  height: 87vmin;
+  max-height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.top-strip-button {
+  margin: 0 15px 0 0;
+  background-color: grey;
+  border-radius: 8px;
+  padding: 4px;
+  width: 45px;
+  height: 22px;
+  font-size: 16px;
+}
+
+.interval-selector {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  width: 96%;
+  margin: auto;
+}
+
+.selector-button {
+  background-color: #7376BC;
+  font-size: 16px;
+  width: 12.5vmin;
+  height: 12.5vmin;
+  max-width: 62px;
+  max-height: 62px;
+  margin: 1vmin;
+}
+
+.meters-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  font-size: 20px;
+  width: 215px;
+  margin: 4vmin 0 4vmin 0;
+}
+
+.info-text {
+  padding: 3vmin;
+  max-width: 900px;
+  margin: auto;
+}
+.disabled {
+  background-color: grey;
+  color: dimGrey;
+  cursor: default;
+}
+
+.correct {
+  background-color: #6DB752
+}
+
+.wrong {
+  background-color: #E45A69
+}
+
+.flash {
+  box-shadow: 0 0 90px 3px;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.removed {
+  display: none;
+}
