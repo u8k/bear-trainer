@@ -11,6 +11,8 @@ var answer, firstNote, secondNote, isGameActive = false;
 //variable speed setting(time between notes, milliSeconds)
 var delay = 500;
 
+var autoPlay = false;
+
 var checkInput= function(num, elem) {
   if (elem.classList.contains('correct')) {
     //replay the interval
@@ -29,6 +31,11 @@ var checkInput= function(num, elem) {
       incrDom('streak');
       document.getElementById('go-text').innerHTML = 'GO';
       isGameActive = false;
+      if (autoPlay === true) {
+        setTimeout(function () {
+          action();
+        }, 900);
+      }
     } else {
       document.getElementById('streak').innerHTML = 0;
       elem.classList.add('wrong');
@@ -60,7 +67,7 @@ var checkInput= function(num, elem) {
   }
 }
 
-var action = function(btn) {
+var action = function() {
   if (activeIntervals.length !== 0) {
     if (document.getElementById('go-text').innerHTML === 'GO') {
       document.getElementById('go-text').innerHTML = 'replay'
@@ -87,6 +94,16 @@ var action = function(btn) {
 // ^'game logic' stuff
 ///////////////////////////////
 // v "utility" stuff
+
+var toggleAutoPlay = function (btn) {
+  if (btn.classList.contains('disabled')) {
+    btn.classList.remove('disabled');
+    autoPlay = true;
+  } else {
+    btn.classList.add('disabled');
+    autoPlay = false;
+  }
+}
 
 var positiveFeedback = function () {
   var i = 1;

@@ -55,6 +55,7 @@ h1 {
 
 #log-button,
 knob,
+.autoplay-option-button,
 .selector-button,
 .text-button,
 .button,
@@ -187,6 +188,7 @@ h5 {
   z-index: 3;
 }
 
+.autoplay-option-button,
 .text-button {
   background-color: dimgrey;
   border-radius: 10px;
@@ -345,14 +347,20 @@ h4 {
   margin: 4vmin 0 4vmin 0;
 }
 
+.autoplay-option-button {
+  background-color: #7EB569;
+  margin: 0;
+}
+
 .info-text {
   padding: 3vmin;
   max-width: 900px;
   margin: auto;
 }
+
 .disabled {
   background-color: grey;
-  color: dimGrey;
+  color: #515159;
   cursor: default;
 }
 
