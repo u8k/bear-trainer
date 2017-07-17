@@ -7,19 +7,18 @@ var passport = require('passport');
 var bcrypt = require('bcryptjs');
 var User = require('./models/user');
 
-/*
+
 //connect and check mongoDB
-var promise = mongoose.connect('mongodb://localhost:27017/nodekb', {useMongoClient: true});
+var promise = mongoose.connect(process.env.MONGODB_URI, {useMongoClient: true});
 var db = mongoose.connection;
 db.once('open', function(){
-  //console.log('Connected to MongoDB');
+  console.log('Connected to MongoDB');
 });
 
 // Check for DB errors
 db.on('error', function(err){
   console.log(err);
 });
-*/
 
 // Init App
 var app = express();
