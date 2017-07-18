@@ -1,16 +1,24 @@
 "use strict";
 
-var activeIntervals = [];
-for (var i = -12; i < 13; i++) {
-  if (i !== 0) {
-    activeIntervals.push(i);
+var activeIntervals;
+
+var resetActiveIntervals = function () {
+  activeIntervals = [];
+  for (var i = -12; i < 13; i++) {
+    if (i !== 0) {
+      activeIntervals.push(i);
+    }
   }
 }
+resetActiveIntervals();
 
-var answer, firstNote, secondNote, isGameActive = false;
+var clearActiveIntervals = function () {
+  activeIntervals = [];
+}
+
+var answer, firstNote, secondNote;
 //variable speed setting(time between notes, milliSeconds)
 var delay = 500;
-
 var autoPlay = false;
 
 var checkInput= function(num, elem) {
@@ -19,7 +27,7 @@ var checkInput= function(num, elem) {
     playSound(firstNote);
     setTimeout(function() {playSound(secondNote);}, delay);
   }
-  if ((isGameActive === true) && (!elem.classList.contains('disabled'))) {
+  if ((document.getElementById('go-text').innerHTML !== 'GO') && (!elem.classList.contains('disabled'))) {
     document.getElementById('stats-corner').classList.remove('removed');
     incrDom('sesAttempts'+answer);
     incrDom('sesAttempts');
@@ -30,7 +38,6 @@ var checkInput= function(num, elem) {
       incrDom('sesWins');
       incrDom('streak');
       document.getElementById('go-text').innerHTML = 'GO';
-      isGameActive = false;
       if (autoPlay === true) {
         setTimeout(function () {
           action();
@@ -74,7 +81,6 @@ var action = function() {
       for (var i = 1; i < 13; i++) {
         document.getElementById('b'+i).classList.remove('correct','wrong');
       }
-      isGameActive = true;
       answer = activeIntervals[Math.floor(Math.random() * (activeIntervals.length))];
       if (answer >= 1) {
         firstNote = Math.floor(Math.random() * (24 - answer));
@@ -126,7 +132,7 @@ var deFlash = function (elem) {
   }, 65)
 }
 
-var disableInterval = function (elem, intvl) {
+var enableInterval = function (elem, intvl) {
   elem.classList.remove('disabled');
   activeIntervals.push(intvl);
   document.getElementById('b'+ Math.abs(intvl)).classList.remove('disabled');
@@ -135,7 +141,8 @@ var disableInterval = function (elem, intvl) {
   }
 }
 
-var enableInterval = function (elem, intvl) {
+var disableInterval = function (elem, intvl) {
+  document.getElementById('go-text').innerHTML = 'GO';
   elem.classList.add('disabled');
   var len = activeIntervals.length
   if (len === 1) {
@@ -161,24 +168,32 @@ var enableInterval = function (elem, intvl) {
 
 var toggleInterval = function (elem, intvl) {
   if (elem.classList.contains('disabled')) {
-    disableInterval(elem, intvl);
+    enableInterval(elem, intvl);
   } else {
-    enableInterval(elem, intvl)
+    disableInterval(elem, intvl)
   }
 }
 
 var toggleAll = function (btn) {
   if (btn.innerHTML === "all") {
     btn.innerHTML = "none";
-    var func = disableInterval;
+    resetActiveIntervals();
+    document.getElementById('go-button').classList.remove('disabled');
+    var func = function (elem) {elem.classList.remove('disabled');}
   } else {
     btn.innerHTML = "all";
-    var func = enableInterval;
+    clearActiveIntervals();
+    document.getElementById('go-text').innerHTML = 'GO';
+    document.getElementById('go-button').classList.add('disabled');
+    var func = function (elem) {elem.classList.add('disabled');}
   }
   for (var i = -12; i < 13; i++) {
     if (i !== 0) {
-      func(document.getElementById("sb"+i) , i);
+      func(document.getElementById("sb"+i));
     }
+  }
+  for (var i = 1; i < 13; i++) {
+    func(document.getElementById("b"+i));
   }
 }
 
@@ -295,38 +310,13 @@ function volumeAdjust(amount) {
 
 
 ////////**************** sound player stuff**********///////////////
-/*
-var channel_max = 10; // number of channels
-var audiochannels = [];
-for (var a = 0; a < channel_max; a++) { // prepare the channels
-  audiochannels[a] = [];
-  audiochannels[a]['channel'] = new Audio(); // create a new audio object
-  audiochannels[a]['channel'].volume = .5;
-  audiochannels[a]['finished'] = -1; // expected end time for this channel
-}
 
-// sound player
-// 's' must be an integer from 0-24 inclusive
-function playSound(s) {
-  for (var a = 0; a < audiochannels.length; a++) {
-    var thistime = new Date();
-    if (audiochannels[a]['finished'] < thistime.getTime()) { // is this channel finished?
-      audiochannels[a]['finished'] = thistime.getTime() + audioStorage[s].duration * 1000;
-      audiochannels[a]['channel'].src = audioStorage[s].src;
-      audiochannels[a]['channel'].load();
-      audiochannels[a]['channel'].play();
-      break;
-    }
-  }
-}
-*/
-
-//load in audio files
+//load in audio files, assigning each to it's own Audio object.
 var audioStorage = [];
 for (var i = 0; i < 25; i++) {
   audioStorage.push(new Audio(["sounds/"+ i +".wav"]))
 }
-//////////////////
+
 // 's' must be an integer from 0-24 inclusive
 var playSound = function (s) {
   audioStorage[s].play();

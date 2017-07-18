@@ -358,12 +358,6 @@ h4 {
   margin: auto;
 }
 
-.disabled {
-  background-color: grey;
-  color: #515159;
-  cursor: default;
-}
-
 .correct {
   background-color: #6DB752
 }
@@ -374,6 +368,12 @@ h4 {
 
 .flash {
   box-shadow: 0 0 90px 3px;
+}
+
+.disabled {
+  background-color: grey;
+  color: #515159;
+  cursor: default;
 }
 
 .hidden {
