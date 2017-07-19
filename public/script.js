@@ -18,7 +18,7 @@ var clearActiveIntervals = function () {
 
 var answer, firstNote, secondNote;
 //variable speed setting(time between notes, milliSeconds)
-var delay = 500;
+var delay = 600;
 var autoPlay = false;
 
 var checkInput= function(num, elem) {
@@ -283,10 +283,10 @@ function speedAdjust(amount) {
     var display = Number(document.getElementById("speedMeter").innerHTML);
     display += amount;
     document.getElementById("speedMeter").innerHTML = display;
-    delay = Math.abs(10 - display) * 100;
+    delay = Math.abs(11 - display) * 100;
     if (display == 10) {document.getElementById("speedUpKnob").classList.add('hidden');}
-    else if (display == 0) {document.getElementById("speedDownKnob").classList.add('hidden');}
-    else if ((display == 1) && (amount == 1)) {document.getElementById("speedDownKnob").classList.remove('hidden');}
+    else if (display == 1) {document.getElementById("speedDownKnob").classList.add('hidden');}
+    else if ((display == 2) && (amount == 1)) {document.getElementById("speedDownKnob").classList.remove('hidden');}
     else if ((display == 9) && (amount == -1)) {document.getElementById("speedUpKnob").classList.remove('hidden');}
   }
   playSound(Math.floor(Math.random()*(25)));
@@ -298,13 +298,13 @@ function volumeAdjust(amount) {
   current += amount;
   document.getElementById("volumeMeter").innerHTML = current
   var actual = current *.1;
-  for (var i = 0; i < channel_max; i++) {
-    audiochannels[i]['channel'].volume = actual;
+  for (var i = 0; i < audioStorage.length; i++) {
+    audioStorage[i].volume = actual;
   }
   playSound(Math.floor(Math.random()*(25)));
   if (current == 10) {document.getElementById("volUpKnob").classList.add('hidden');}
-  else if (current == 0) {document.getElementById("volDownKnob").classList.add('hidden');}
-  else if ((current == 1) && (amount == 1)) {document.getElementById("volDownKnob").classList.remove('hidden');}
+  else if (current == 1) {document.getElementById("volDownKnob").classList.add('hidden');}
+  else if ((current == 2) && (amount == 1)) {document.getElementById("volDownKnob").classList.remove('hidden');}
   else if ((current == 9) && (amount == -1)) {document.getElementById("volUpKnob").classList.remove('hidden');}
 }
 
@@ -314,10 +314,10 @@ function volumeAdjust(amount) {
 //load in audio files, assigning each to it's own Audio object.
 var audioStorage = [];
 for (var i = 0; i < 25; i++) {
-  audioStorage.push(new Audio(["sounds/"+ i +".wav"]))
+  audioStorage.push(new Audio(["sounds/"+ i +".wav"]));
+  audioStorage[i].volume = .5;
 }
 
-// 's' must be an integer from 0-24 inclusive
-var playSound = function (s) {
+var playSound = function (s) {  // 's' must be an integer from 0-24 inclusive
   audioStorage[s].play();
 }
