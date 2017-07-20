@@ -1,7 +1,6 @@
 "use strict";
 
 var activeIntervals;
-
 var resetActiveIntervals = function () {
   activeIntervals = [];
   for (var i = -12; i < 13; i++) {
@@ -104,11 +103,13 @@ var action = function() {
 var toggleAutoPlay = function (btn) {
   if (btn.classList.contains('disabled')) {
     btn.classList.remove('disabled');
-    autoPlay = true;
+    var boo = true;
   } else {
     btn.classList.add('disabled');
-    autoPlay = false;
+    var boo = false;
   }
+  cookie.update('autoPlay', boo);
+  autoPlay = boo;
 }
 
 var positiveFeedback = function () {
@@ -169,8 +170,10 @@ var disableInterval = function (elem, intvl) {
 var toggleInterval = function (elem, intvl) {
   if (elem.classList.contains('disabled')) {
     enableInterval(elem, intvl);
+    cookie.update(intvl, true);
   } else {
     disableInterval(elem, intvl)
+    cookie.update(intvl, false);
   }
 }
 
@@ -180,16 +183,19 @@ var toggleAll = function (btn) {
     resetActiveIntervals();
     document.getElementById('go-button').classList.remove('disabled');
     var func = function (elem) {elem.classList.remove('disabled');}
+    var boo = true
   } else {
     btn.innerHTML = "all";
     clearActiveIntervals();
     document.getElementById('go-text').innerHTML = 'GO';
     document.getElementById('go-button').classList.add('disabled');
     var func = function (elem) {elem.classList.add('disabled');}
+    var boo = false
   }
   for (var i = -12; i < 13; i++) {
     if (i !== 0) {
       func(document.getElementById("sb"+i));
+      cookie.update(i, boo);
     }
   }
   for (var i = 1; i < 13; i++) {
@@ -272,8 +278,14 @@ window.onkeyup = function(e) {
   var key = e.keyCode;
   //console.log(key);
   switch (key) {
-    case 32:
+    case 32:  // space
       action();
+      break;
+    case 65:  // A
+
+      break;
+    case 83:  // S
+
       break;
   }
 }
@@ -283,11 +295,9 @@ function speedAdjust(amount) {
     var display = Number(document.getElementById("speedMeter").innerHTML);
     display += amount;
     document.getElementById("speedMeter").innerHTML = display;
-    delay = Math.abs(11 - display) * 100;
-    if (display == 10) {document.getElementById("speedUpKnob").classList.add('hidden');}
-    else if (display == 1) {document.getElementById("speedDownKnob").classList.add('hidden');}
-    else if ((display == 2) && (amount == 1)) {document.getElementById("speedDownKnob").classList.remove('hidden');}
-    else if ((display == 9) && (amount == -1)) {document.getElementById("speedUpKnob").classList.remove('hidden');}
+    cookie.update('speed', display);
+    delay = (11 - display) * 100;
+    checkKnobs('speed', amount);
   }
   playSound(Math.floor(Math.random()*(25)));
   setTimeout(function() {playSound(Math.floor(Math.random()*(25)));}, delay);
@@ -297,17 +307,25 @@ function volumeAdjust(amount) {
   var current = Number(document.getElementById("volumeMeter").innerHTML);
   current += amount;
   document.getElementById("volumeMeter").innerHTML = current
+  cookie.update('volume', current);
   var actual = current *.1;
   for (var i = 0; i < audioStorage.length; i++) {
     audioStorage[i].volume = actual;
   }
   playSound(Math.floor(Math.random()*(25)));
-  if (current == 10) {document.getElementById("volUpKnob").classList.add('hidden');}
-  else if (current == 1) {document.getElementById("volDownKnob").classList.add('hidden');}
-  else if ((current == 2) && (amount == 1)) {document.getElementById("volDownKnob").classList.remove('hidden');}
-  else if ((current == 9) && (amount == -1)) {document.getElementById("volUpKnob").classList.remove('hidden');}
+  checkKnobs('volume', amount);
 }
 
+//function to check if meter is at either end of it's range and if knobs need adding/removing
+var checkKnobs = function (type, amount) { //type must be "volume" or "speed"
+  var upKnob = document.getElementById(type + "UpKnob");
+  var downKnob = document.getElementById(type + "DownKnob");
+  var current = document.getElementById(type + "Meter").innerHTML;
+  if (current == 10) {upKnob.classList.add('hidden');}
+  else if (current == 1) {downKnob.classList.add('hidden');}
+  else if ((current == 2) && (amount == 1)) {downKnob.classList.remove('hidden');}
+  else if ((current == 9) && (amount == -1)) {upKnob.classList.remove('hidden');}
+}
 
 ////////**************** sound player stuff**********///////////////
 
@@ -321,3 +339,86 @@ for (var i = 0; i < 25; i++) {
 var playSound = function (s) {  // 's' must be an integer from 0-24 inclusive
   audioStorage[s].play();
 }
+
+
+////// cookie handler ///////
+var cookie = {
+  startup: function () {
+    if (document.cookie) {cookie.load();}
+    else {cookie.new();}
+  },
+  default: "111111111111111111111111440",
+  load: function (data) { //takes in pre-existing cookie and updates View accordlingly
+    cookie.dataString = document.cookie.slice(8);
+    //compare current cookie to the default
+    for (var i = 0; i < cookie.dataString.length; i++) {
+      if (cookie.dataString[i] !== cookie.default[i]) {
+        if (i < 24) { // intervals
+          if (i < 12) {var intvl = i+1;}
+          else {var intvl = i-24}
+          disableInterval(document.getElementById('sb'+intvl), intvl);
+        } else if (i === 24) { // volume
+          document.getElementById("volumeMeter").innerHTML = Number(cookie.dataString[i]) + 1
+          for (var j = 0; j < audioStorage.length; j++) {
+            audioStorage[j].volume = (Number(cookie.dataString[i]) + 1) * .1;
+          }
+          checkKnobs('volume');
+        } else if (i === 25) { // speed
+          document.getElementById("speedMeter").innerHTML = Number(cookie.dataString[i]) + 1
+          delay = (10 - Number(cookie.dataString[i])) * 100;
+          checkKnobs('speed');
+        } else if (i === 26) { // autoPlay
+          toggleAutoPlay(document.getElementById('autoplay'));
+        }
+      }
+    }
+    //freshen the cookie
+    cookie.saveCookie();
+  },
+  new: function () { //sets a new cookie w/ default values
+    cookie.dataString = cookie.default;
+    cookie.saveCookie();
+  },
+  update: function (param, value) { //param must be (-12)-(-1), 1-12, 'volume', 'speed', or 'autoplay'
+    if (typeof param === "number") {
+      if (param > 0) {
+        param += -1;
+      } else {
+        param += 24;
+      }
+      if (value) {
+        value = 1;
+      } else {
+        value = 0;
+      }
+    } else {
+      if (param === "volume") {
+        param = 24;
+        value = value -1;
+      } else if (param === "speed") {
+        param = 25;
+        value = value -1;
+      } else if (param === "autoPlay") {
+        param = 26;
+        if (value) {
+          value = 1;
+        } else {
+          value = 0;
+        }
+      }
+    }
+    cookie.dataString = cookie.dataString.slice(0,param) + value + cookie.dataString.slice(param + 1);
+    cookie.saveCookie();
+  },
+  saveCookie: function () {
+    var cvalue = cookie.dataString;
+    var cname = 'options'
+    var days = 7;
+    var d = new Date();
+    d.setTime(d.getTime() + (days*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+  }
+}
+
+cookie.startup();

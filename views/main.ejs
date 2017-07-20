@@ -190,9 +190,9 @@
           <div class="meters-box">
             <div class="volume-controls">
               <div>volume:</div>
-              <knob id="volDownKnob" onclick="volumeAdjust(-1)"><</knob>
+              <knob id="volumeDownKnob" onclick="volumeAdjust(-1)"><</knob>
               <knob id="volumeMeter" onclick='playSound(Math.floor(Math.random()*(24)))'>5</knob>
-              <knob id="volUpKnob" onclick="volumeAdjust(1)">></knob>
+              <knob id="volumeUpKnob" onclick="volumeAdjust(1)">></knob>
             </div>
             <div class="speed-controls">
               <div>speed:</div>
@@ -202,7 +202,7 @@
             </div>
           </div>
           <br>
-          <div class="autoplay-option-button disabled" onclick="toggleAutoPlay(this)">autoplay next</div>
+          <div id="autoplay" class="autoplay-option-button disabled" onclick="toggleAutoPlay(this)">autoplay next</div>
           <br>
           <div class="text-button return-button" onclick="closePanel()">return</div>
         </div>
