@@ -49,7 +49,7 @@
       <p>streak: <c id="streak">0</c></p>
     </div>
 
-    <div id="options-button" class="button" onclick="showPanel('options-panel')">~</div>
+    <div id="options-button" class="button" onclick="showPanel('info-panel')">~</div>
 
     <div id="panel-backing" class="removed"></div>
 
@@ -158,7 +158,7 @@
           <% } %>
         </div>
       </div>
-      <div class="text-button return-button" onclick="closePanel()">return</div>
+      <div class="text-button return-button" onclick="closePanel('stats-panel')">return</div>
     </div>
 
     <div id="options-panel" class="removed">
@@ -204,7 +204,7 @@
           <br>
           <div id="autoplay" class="autoplay-option-button disabled" onclick="toggleAutoPlay(this)">autoplay next</div>
           <br>
-          <div class="text-button return-button" onclick="closePanel()">return</div>
+          <div class="text-button return-button" onclick="closePanel('options-panel')">return</div>
         </div>
       </div>
     </div>
@@ -217,19 +217,19 @@
       </div>
       <p class="info-text">
 
-      if you are new and/or  confused and/or overwhelmed and/or doing poorly and/or getting frustrated:<br>
+      if you are new and/or confused and/or overwhelmed and/or doing poorly and/or getting frustrated:<br>
       <br>
-      go to the options tab<br>
-      press 'none' to disable all intervals<br>
-      re-enable any two<br>
-      just work on those two to start with<br>
-      once you have the hang of those, try adding a third. and so on.<br>
+      pick any two intervals<br>
+      just work on those to start with<br>
+      once you have the hang of them, try adding a third. and so on.<br>
       <br>
       spacebar = go
       <br><br>
+      options are sticky if you allow cookies
+      <br><br>
       <a href="https://en.wikipedia.org/wiki/Ear_training#Interval_recognition">have some wiki</a>
       </p>
-      <div class="text-button return-button" onclick="closePanel()">return</div>
+      <div class="text-button return-button" onclick="closePanel('info-panel')">return</div>
     </div>
     <script src="script.js"></script>
   </body>

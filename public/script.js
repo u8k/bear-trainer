@@ -217,13 +217,16 @@ var showPanel = function(panelName) {
   document.getElementById('panel-backing').classList.remove('removed');
 }
 
-var closePanel = function() {
+var closePanel = function(currentPanel) {
   document.getElementById('panel-backing').classList.add('removed');
   document.getElementById('user-info-panel').classList.add('removed');
   document.getElementById('stats-panel').classList.add('removed');
   document.getElementById('options-panel').classList.add('removed');
   document.getElementById('info-panel').classList.add('removed');
   document.getElementById('title-panel').classList.add('removed');
+  if (currentPanel) {
+    document.getElementById('options-button').onclick = function(){showPanel(currentPanel);};
+  }
 }
 
 var sign = function(inOrUp) {
@@ -345,14 +348,20 @@ var playSound = function (s) {  // 's' must be an integer from 0-24 inclusive
 var cookie = {
   startup: function () {
     if (document.cookie) {cookie.load();}
-    else {cookie.new();}
+    else {
+      cookie.dataString = cookie.default;
+      cookie.load(true);
+    }
   },
-  default: "111111111111111111111111440",
+  default: "000100100000000000000000440",
+  onLoad: "111111111111111111111111440",
   load: function (data) { //takes in pre-existing cookie and updates View accordlingly
-    cookie.dataString = document.cookie.slice(8);
-    //compare current cookie to the default
+    if (!data) {
+      cookie.dataString = document.cookie.slice(8);
+    }
+    //compare current cookie to the onLoad state to find needed changes
     for (var i = 0; i < cookie.dataString.length; i++) {
-      if (cookie.dataString[i] !== cookie.default[i]) {
+      if (cookie.dataString[i] !== cookie.onLoad[i]) {
         if (i < 24) { // intervals
           if (i < 12) {var intvl = i+1;}
           else {var intvl = i-24}
@@ -373,10 +382,6 @@ var cookie = {
       }
     }
     //freshen the cookie
-    cookie.saveCookie();
-  },
-  new: function () { //sets a new cookie w/ default values
-    cookie.dataString = cookie.default;
     cookie.saveCookie();
   },
   update: function (param, value) { //param must be (-12)-(-1), 1-12, 'volume', 'speed', or 'autoplay'
