@@ -21,12 +21,12 @@ var delay = 600;
 var autoPlay = false;
 
 var checkInput= function(num, elem) {
-  if (elem.classList.contains('correct')) {
+  if (elem.classList.contains('correct') && !autoPlay) {
     //replay the interval
-    playSound(firstNote);
-    setTimeout(function() {playSound(secondNote);}, delay);
+    audio.play(String(firstNote));
+    setTimeout(function() {audio.play(String(secondNote));}, delay);
   }
-  if ((document.getElementById('go-text').innerHTML !== 'GO') && (!elem.classList.contains('disabled'))) {
+  else if ((document.getElementById('go-text').innerHTML !== 'GO') && (!elem.classList.contains('disabled'))) {
     document.getElementById('stats-corner').classList.remove('removed');
     incrDom('sesAttempts'+answer);
     incrDom('sesAttempts');
@@ -90,15 +90,11 @@ var action = function() {
       }
     }
     //play first note
-    playSound(firstNote);
+    audio.play(String(firstNote));
     // queue second note
-    setTimeout(function() {playSound(secondNote);}, delay);
+    setTimeout(function() {audio.play(String(secondNote));}, delay);
   }
 }
-
-// ^'game logic' stuff
-///////////////////////////////
-// v "utility" stuff
 
 var toggleAutoPlay = function (btn) {
   if (btn.classList.contains('disabled')) {
@@ -115,7 +111,7 @@ var toggleAutoPlay = function (btn) {
 var positiveFeedback = function () {
   var i = 1;
   (function repeat() {
-    var elem = document.getElementById('b'+Math.floor(Math.random()*(12)+1));
+    var elem = document.getElementById('b'+ Math.abs(activeIntervals[Math.floor(Math.random()*(activeIntervals.length))]));
     elem.classList.add('flash');
     deFlash(elem);
     i++;
@@ -302,20 +298,19 @@ function speedAdjust(amount) {
     delay = (11 - display) * 100;
     checkKnobs('speed', amount);
   }
-  playSound(Math.floor(Math.random()*(25)));
-  setTimeout(function() {playSound(Math.floor(Math.random()*(25)));}, delay);
+  audio.play(String(Math.floor(Math.random()*(25))));
+  setTimeout(function() {audio.play(String(Math.floor(Math.random()*(25))));}, delay);
 }
 
 function volumeAdjust(amount) {
+  if (amount === 0) {audio.play(String(Math.floor(Math.random()*(25)))); return}
   var current = Number(document.getElementById("volumeMeter").innerHTML);
   current += amount;
   document.getElementById("volumeMeter").innerHTML = current
   cookie.update('volume', current);
   var actual = current *.1;
-  for (var i = 0; i < audioStorage.length; i++) {
-    audioStorage[i].volume = actual;
-  }
-  playSound(Math.floor(Math.random()*(25)));
+  audio['_volume'] = actual
+  audio.play(String(Math.floor(Math.random()*(25))));
   checkKnobs('volume', amount);
 }
 
@@ -330,19 +325,15 @@ var checkKnobs = function (type, amount) { //type must be "volume" or "speed"
   else if ((current == 9) && (amount == -1)) {upKnob.classList.remove('hidden');}
 }
 
-////////**************** sound player stuff**********///////////////
-
-//load in audio files, assigning each to it's own Audio object.
-var audioStorage = [];
+//////******* sound player setup******///////
+var audio = new Howl({
+  src: ['audio.mp3'],
+  volume: .5,
+  sprite: []
+});
 for (var i = 0; i < 25; i++) {
-  audioStorage.push(new Audio(["sounds/"+ i +".wav"]));
-  audioStorage[i].volume = .5;
+  audio['_sprite'].push([i*500, 400]);
 }
-
-var playSound = function (s) {  // 's' must be an integer from 0-24 inclusive
-  audioStorage[s].play();
-}
-
 
 ////// cookie handler ///////
 var cookie = {
@@ -368,9 +359,7 @@ var cookie = {
           disableInterval(document.getElementById('sb'+intvl), intvl);
         } else if (i === 24) { // volume
           document.getElementById("volumeMeter").innerHTML = Number(cookie.dataString[i]) + 1
-          for (var j = 0; j < audioStorage.length; j++) {
-            audioStorage[j].volume = (Number(cookie.dataString[i]) + 1) * .1;
-          }
+          audio['_volume'] = (Number(cookie.dataString[i]) + 1) * .1;
           checkKnobs('volume');
         } else if (i === 25) { // speed
           document.getElementById("speedMeter").innerHTML = Number(cookie.dataString[i]) + 1

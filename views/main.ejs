@@ -191,7 +191,7 @@
             <div class="volume-controls">
               <div>volume:</div>
               <knob id="volumeDownKnob" onclick="volumeAdjust(-1)"><</knob>
-              <knob id="volumeMeter" onclick='playSound(Math.floor(Math.random()*(24)))'>5</knob>
+              <knob id="volumeMeter" onclick="volumeAdjust(0)">5</knob>
               <knob id="volumeUpKnob" onclick="volumeAdjust(1)">></knob>
             </div>
             <div class="speed-controls">
@@ -231,6 +231,7 @@
       </p>
       <div class="text-button return-button" onclick="closePanel('info-panel')">return</div>
     </div>
+    <script src="howler.min.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
