@@ -103,6 +103,7 @@ btntxt {
 }
 @media only screen and (min-width: 600px) and (min-height: 600px) {
   btntxt {top: 34%;}
+  #options-button {}
 }
 
 .go-button {
@@ -130,6 +131,15 @@ btntxt {
   width: 35px;
   border-width: 2.4px;
   background-color: #626263;
+}
+@media only screen and (min-width: 500px) and (min-height: 500px) {
+  #options-button {
+    padding-top: 7px;
+    height: 70px;
+    width: 70px;
+    border-width: 4px;
+    font-size: 40px;
+  }
 }
 
 #stats-corner {
@@ -352,10 +362,17 @@ h4 {
   margin: 0;
 }
 
+.info-text-box {
+  height: calc(100vh - 28vmin);
+  max-height: 600px;
+  overflow-y: scroll;
+}
+
 .info-text {
   padding: 3vmin;
   max-width: 900px;
   margin: auto;
+  color: #D7D4D8;
 }
 
 .correct {
