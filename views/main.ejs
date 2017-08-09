@@ -16,24 +16,11 @@
         for(var i = 1; i < 13; i++) { %>
             <div class="interval-button" id="b<%= i %>" onclick="checkInput(<%= i %>, this)"><btntxt><%= intvlNames[i] %></btntxt></div>
         <% } %>
-
-        <!--
-        <div class="interval-button" id="b1" onclick="checkInput(1, this)"><btntxt>m2</btntxt></div>
-        <div class="interval-button" id="b2" onclick="checkInput(2, this)"><btntxt>M2</btntxt></div>
-        <div class="interval-button" id="b3" onclick="checkInput(3, this)"><btntxt>m3</btntxt></div>
-        <div class="interval-button" id="b4" onclick="checkInput(4, this)"><btntxt>M3</btntxt></div>
-        <div class="interval-button" id="b5" onclick="checkInput(5, this)"><btntxt>P4</btntxt></div>
-        <div class="interval-button" id="b6" onclick="checkInput(6, this)"><btntxt>tri</btntxt></div>
-        <div class="interval-button" id="b7" onclick="checkInput(7, this)"><btntxt>P5</btntxt></div>
-        <div class="interval-button" id="b8" onclick="checkInput(8, this)"><btntxt>m6</btntxt></div>
-        <div class="interval-button" id="b9" onclick="checkInput(9, this)"><btntxt>M6</btntxt></div>
-        <div class="interval-button" id="b10" onclick="checkInput(10, this)"><btntxt>m7</btntxt></div>
-        <div class="interval-button" id="b11" onclick="checkInput(11, this)"><btntxt>M7</btntxt></div>
-        <div class="interval-button" id="b12" onclick="checkInput(12, this)"><btntxt>8</btntxt></div>
-         -->
       </div>
 
       <div id="go-button" class="go-button button" onclick="action()"><btntxt id="go-text">GO</btntxt></div>
+
+      <div id="int-ind">.</div>
     </div>
 
     <p id="log-button" onclick="showPanel('user-info-panel')">
@@ -201,9 +188,13 @@
               <knob id="speedUpKnob" onclick="speedAdjust(1)">></knob>
             </div>
           </div>
-          <br>
+          <div class="per-prompt-controls">
+            <div>intervals per prompt:</div>
+            <knob id="perPromptDownKnob" onclick="perPromptAdjust(-1)"><</knob>
+            <knob id="perPromptMeter">2</knob>
+            <knob id="perPromptUpKnob" onclick="perPromptAdjust(1)">></knob>
+          </div>
           <div id="autoplay" class="autoplay-option-button disabled" onclick="toggleAutoPlay(this)">autoplay next</div>
-          <br>
           <div class="text-button return-button" onclick="closePanel('options-panel')">return</div>
         </div>
       </div>
@@ -228,7 +219,8 @@
           once you have the hang of them, try adding a third. and so on.<br>
           ("options", top of this screen)<br>
           <br>
-          don't worry too much about why the buttons are named as they are or what they mean
+          if you don't know what the labels on the buttons mean:<br>
+          don't worry too much about it
           <br><br>
           when you look at the the flapping thing with the feathers and beak and go "bird" it doesn't super matter why the word "bird". what exactly the term is isn't as important as there being a general consensus on some term or another. there probably is some etymology or whatever on the origin of the “bird” but that information is irrelevant to the actual usage of the word to communicate.
           <br><br>

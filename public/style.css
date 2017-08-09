@@ -26,7 +26,7 @@ p {
 h1 {
   text-align: center;
   font-size: 6.5vmin;
-  margin: 5vh;
+  margin: 3vh;
 }
 
 .interval-button-container {
@@ -38,20 +38,6 @@ h1 {
   height: 108vw;
 }
 
-/*
-#b1 {background-color: #5A66E5}
-#b2 {background-color: #945AE4}
-#b3 {background-color: #D254DF}
-#b4 {background-color: #DE53A4}
-#b5 {background-color: #E55B66}
-#b6 {background-color: #E29258}
-#b7 {background-color: #D7CB4C}
-#b8 {background-color: #9CD64C}
-#b9 {background-color: #5DDC51}
-#b10 {background-color: #52DD8C}
-#b11 {background-color: #4AD5C9}
-#b12 {background-color: #4C9ED7}
-*/
 
 #log-button,
 knob,
@@ -75,7 +61,7 @@ knob,
   border-radius: 10px;
   height: 23%;
   width: 25%;
-  margin: 1%;
+  margin: .8vmin;
   text-align: center;
   font-size: 25px;
   border-style: solid;
@@ -86,12 +72,13 @@ knob,
 @media only screen and (min-width: 500px) {
   .interval-button-container {
     height: 23.33vw;
-    min-height: 166.67px;
+    min-height: 150px;
     width: 70vw;
     min-width: 500px;
   }
   .interval-button {
     height: 42.42%;
+    min-height: 70px;
     width: 14%;
   }
 }
@@ -113,6 +100,11 @@ btntxt {
   min-height: 80px;
   background-color: #D7D4D8;
   color: black
+}
+
+#int-ind {
+  font-size: 25px;
+  margin-bottom: 1vh;
 }
 
 #log-button {
@@ -284,7 +276,7 @@ input:-webkit-autofill {
 .other-options-box {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
 }
 

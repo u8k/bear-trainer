@@ -15,32 +15,41 @@ var clearActiveIntervals = function () {
   activeIntervals = [];
 }
 
-var answer, firstNote, secondNote;
-//variable speed setting(time between notes, milliSeconds)
-var delay = 600;
+var answerList, anchorNote, pos;
+var intervalsPerPrompt = 2;
+var delay = 600;//variable speed setting(milliSeconds between notes)
 var autoPlay = false;
 
 var checkInput= function(num, elem) {
-  if (elem.classList.contains('correct') && !autoPlay) {
-    //replay the interval
-    audio.play(String(firstNote));
-    setTimeout(function() {audio.play(String(secondNote));}, delay);
-  }
-  else if ((document.getElementById('go-text').innerHTML !== 'GO') && (!elem.classList.contains('disabled'))) {
+  if ((document.getElementById('go-text').innerHTML !== 'GO') && (!elem.classList.contains('disabled'))) {
     document.getElementById('stats-corner').classList.remove('removed');
-    incrDom('sesAttempts'+answer);
+    incrDom('sesAttempts'+answerList[pos]);
     incrDom('sesAttempts');
     //check for win
-    if (num === Math.abs(answer)) {
+    if (num === Math.abs(answerList[pos])) {
       elem.classList.add('correct');
-      incrDom('sesWins'+answer);
+      incrDom('sesWins'+answerList[pos]);
       incrDom('sesWins');
       incrDom('streak');
-      document.getElementById('go-text').innerHTML = 'GO';
-      if (autoPlay === true) {
+      //is interval last in prompt?
+      if (pos === answerList.length-1) {
+        document.getElementById('go-text').innerHTML = 'GO';
+        document.getElementById("int-ind").innerHTML = ".";
+        if (autoPlay === true) {
+          setTimeout(function () {
+            action();
+          }, 900);
+        }
+      } else { //move to next pos in prompt
+        var str = document.getElementById("int-ind").innerHTML;
+        str = str.slice(0, pos*2) + ". ! " + str.slice((pos+2)*2)
+        document.getElementById("int-ind").innerHTML = str;
+        pos++;
         setTimeout(function () {
-          action();
-        }, 900);
+          for (var i = 1; i < 13; i++) {
+            document.getElementById('b'+i).classList.remove('correct','wrong');
+          }
+        }, 400);
       }
     } else {
       document.getElementById('streak').innerHTML = 0;
@@ -48,10 +57,10 @@ var checkInput= function(num, elem) {
     }
     //check if user is logged in
     if (document.getElementById('userName') !== null) {
-      incrDom('allAttempts'+answer);
+      incrDom('allAttempts'+answerList[pos]);
       incrDom('allTimeAttempts');
-      if (num === Math.abs(answer)) {
-        incrDom('allWins'+answer);
+      if (num === Math.abs(answerList[pos])) {
+        incrDom('allWins'+answerList[pos]);
         incrDom('allTimeWins');
       }
       //update allTime accuracy stat
@@ -60,9 +69,9 @@ var checkInput= function(num, elem) {
         Number(document.getElementById('allTimeAttempts').innerHTML))* 100)
       //update server data
       var data = {
-        interval: answer,
-        attempts: document.getElementById('allAttempts'+answer).innerHTML,
-        wins: document.getElementById('allWins'+answer).innerHTML
+        interval: answerList[pos],
+        attempts: document.getElementById('allAttempts'+answerList[pos]).innerHTML,
+        wins: document.getElementById('allWins'+answerList[pos]).innerHTML
       }
       ajaxCall('/', 'POST', data, function (json) {
         if (json !== 'success') {
@@ -76,23 +85,48 @@ var checkInput= function(num, elem) {
 var action = function() {
   if (activeIntervals.length !== 0) {
     if (document.getElementById('go-text').innerHTML === 'GO') {
+      pos = 0;
       document.getElementById('go-text').innerHTML = 'replay'
       for (var i = 1; i < 13; i++) {
         document.getElementById('b'+i).classList.remove('correct','wrong');
       }
-      answer = activeIntervals[Math.floor(Math.random() * (activeIntervals.length))];
-      if (answer >= 1) {
-        firstNote = Math.floor(Math.random() * (24 - answer));
-        secondNote = firstNote + answer;
-      } else {
-        firstNote = 24 - Math.floor(Math.random() * (24 + answer));
-        secondNote = firstNote + answer;
+      answerList =[];
+      var min = 0;
+      var max = 0;
+      var cur = 0;
+      for (var i = 0; i < intervalsPerPrompt; i++) {
+        var answer = activeIntervals[Math.floor(Math.random() * (activeIntervals.length))];
+        cur += answer;
+        if (cur > max) {
+          if (cur - min > 24) {
+            answer = -answer;
+            cur += answer*2;
+          } else {max = cur;}
+        } else if (cur < min) {
+          if (max - cur > 24) {
+            answer = -answer;
+            cur += answer*2;
+          } else {min = cur;}
+        }
+        answerList.push(answer);
       }
+      var indStr = "!";
+      for (var i = 1; i < intervalsPerPrompt; i++) {
+        indStr += " .";
+      }
+      document.getElementById("int-ind").innerHTML = indStr;
+      anchorNote = Math.floor(Math.random() * (25-(max-min))) - min;
     }
-    //play first note
-    audio.play(String(firstNote));
-    // queue second note
-    setTimeout(function() {audio.play(String(secondNote));}, delay);
+    playPrompt(anchorNote, 0)
+  }
+}
+
+var playPrompt = function (note, next) {
+  audio.play(String(note));
+  if (answerList[next] !== undefined) {
+    setTimeout(function() {
+      playPrompt(note + answerList[next], next+1);
+    }, delay);
   }
 }
 
@@ -314,15 +348,27 @@ function volumeAdjust(amount) {
   checkKnobs('volume', amount);
 }
 
+function perPromptAdjust(amount) {
+  var current = Number(document.getElementById("perPromptMeter").innerHTML);
+  current += amount;
+  document.getElementById("perPromptMeter").innerHTML = current
+  cookie.update('perPrompt', current);
+  intervalsPerPrompt = current;
+  checkKnobs('perPrompt', amount);
+  document.getElementById('go-text').innerHTML = 'GO';
+}
+
 //function to check if meter is at either end of it's range and if knobs need adding/removing
-var checkKnobs = function (type, amount) { //type must be "volume" or "speed"
+var checkKnobs = function (type, amount) { //type must be "volume", "speed", or "perPrompt"
   var upKnob = document.getElementById(type + "UpKnob");
   var downKnob = document.getElementById(type + "DownKnob");
   var current = document.getElementById(type + "Meter").innerHTML;
-  if (current == 10) {upKnob.classList.add('hidden');}
-  else if (current == 1) {downKnob.classList.add('hidden');}
-  else if ((current == 2) && (amount == 1)) {downKnob.classList.remove('hidden');}
-  else if ((current == 9) && (amount == -1)) {upKnob.classList.remove('hidden');}
+  if (type === "perPrompt" && current === '5') {upKnob.classList.add('hidden');}
+  else if (type === "perPrompt" && current === '4' && amount === -1) {upKnob.classList.remove('hidden');}
+  else if (current === '10') {upKnob.classList.add('hidden');}
+  else if (current === '1') {downKnob.classList.add('hidden');}
+  else if ((current === '2') && (amount === 1)) {downKnob.classList.remove('hidden');}
+  else if ((current === '9') && (amount === -1)) {upKnob.classList.remove('hidden');}
 }
 
 //////******* sound player setup******///////
@@ -344,8 +390,8 @@ var cookie = {
       cookie.load(true);
     }
   },
-  default: "000100100000000000000000440",
-  onLoad: "111111111111111111111111440",
+  default: "0001001000000000000000004401",
+  onLoad:  "1111111111111111111111114402",
   load: function (data) { //takes in pre-existing cookie and updates View accordlingly
     if (!data) {
       cookie.dataString = document.cookie.slice(8);
@@ -367,13 +413,17 @@ var cookie = {
           checkKnobs('speed');
         } else if (i === 26) { // autoPlay
           toggleAutoPlay(document.getElementById('autoplay'));
+        } else if (i === 27) { // perPrompt
+          document.getElementById("perPromptMeter").innerHTML = Number(cookie.dataString[i]);
+          intervalsPerPrompt = Number(cookie.dataString[i]);
+          checkKnobs('perPrompt');
         }
       }
     }
     //freshen the cookie
     cookie.saveCookie();
   },
-  update: function (param, value) { //param must be (-12)-(-1), 1-12, 'volume', 'speed', or 'autoplay'
+  update: function (param, value) { //param must be (-12)-(-1), 1-12, 'volume', 'speed', 'perPrompt', or 'autoplay'
     if (typeof param === "number") {
       if (param > 0) {
         param += -1;
@@ -399,6 +449,9 @@ var cookie = {
         } else {
           value = 0;
         }
+      } else if (param === "perPrompt") {
+        param = 27;
+        value = value;
       }
     }
     cookie.dataString = cookie.dataString.slice(0,param) + value + cookie.dataString.slice(param + 1);
